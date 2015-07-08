@@ -12,7 +12,6 @@ var validos = { // JSON con el usuario y contraseña para loggearse.
 app.get('/', function(req, res){  // Raíz para el chat del cliente.
   res.sendFile(__dirname + '/cliente.html');
 });
-
 app.get('/chat', function (req, res){ // Chat solicitado por el cliente.
   res.sendFile(__dirname + '/chat.html');
 });
@@ -20,10 +19,9 @@ app.get('/chat', function (req, res){ // Chat solicitado por el cliente.
 app.get('/login', function (req, res) { // Login para el admin.
   res.sendFile(__dirname + '/login.html')
 });
-app.get('/salas', function (req, res) { // Salas activas visibles para
+app.post('/salas', function (req, res) { // Salas activas visibles para
   var user = req.body.usuario;          // el admin.
   var pass = req.body.password;
-  // console.log(user + ' ' + pass);
   if (user === validos.user && pass === validos.pass) { // Condicional de
     res.sendFile(__dirname + '/salas.html');            // logeo exitoso.
   }
