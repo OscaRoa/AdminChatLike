@@ -9,6 +9,7 @@ var valido = { // Objeto con el usuario y contraseña para loggearse.
   pass: "password"
 };
 var nombreCliente = "";
+
 //Routes
 app.get('/', function(req, res){  // Raíz para el chat del cliente.
   res.sendFile(__dirname + '/cliente.html');
@@ -33,12 +34,18 @@ app.post('/salas', function (req, res) { // Salas activas visibles para
 //Socket
 var nsp = io.of('/consultas');
 nsp.on('connection', function(socket){
-  console.log('Conectado');
   socket.on('Mensaje', function(msg){
     socket.join('/consultas');
     nsp.to('/consultas').emit('Mensaje', msg);  // Emisión del mensaje en el cliente web.
   });
+  socket.on('create', function (room, user) {
+    room = socket.id;
+    user = nombreCliente;
+    socket.join(room);
+    console.log('Nueva sala: ' + room + ' ' + user);
+  });
 });
+
 //Server
 http.listen(3000, function(){ // Puerto a usar en el server.
   console.log('listening on *:3000');
