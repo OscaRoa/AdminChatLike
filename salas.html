@@ -1,14 +1,58 @@
-<meta charset="utf-8">
-<title>Usuarios</title>
-<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-<div>
-  <h3>Usuarios</h3>
-  <div id="rooms"></div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script>
+	var socket = io.connect();
+	// Se pide el nombre al usuario.
+	socket.on('connect', function(){
+		socket.emit('adduser', prompt("Nombre: "));
+	});
+	// Actualización del chat
+	socket.on('updatechat', function (username, data) {
+		$('#conversation').append('<b>'+username + ':</b> ' + data + '<br>');
+	});
+
+	// Actualización de las salas.
+	socket.on('updaterooms', function(rooms, current_room) {
+		$('#rooms').empty();
+		$.each(rooms, function(key, value) {
+			if(value == current_room){
+				$('#rooms').append('<div>' + value + '</div>');
+			}
+			else {
+				$('#rooms').append('<div><a href="#" onclick="switchRoom(\''+value+'\')">' + value + '</a></div>');
+			}
+		});
+	});
+
+	function switchRoom(room){
+		socket.emit('switchRoom', room);
+	}
+
+	// Mensajes.
+	$(function(){
+		// Acción al hacer un click.
+		$('#datasend').click( function() {
+			var message = $('#data').val();
+			$('#data').val('');
+			socket.emit('sendchat', message);
+		});
+
+		// Acción al presionar enter.
+		$('#data').keypress(function(e) {
+			if(e.which == 13) {
+				$(this).blur();
+				$('#datasend').focus().click();
+			}
+		});
+	});
+
+</script>
+<div style="float:left;width:100px;border-right:1px solid black;height:300px;padding:10px;overflow:scroll-y;">
+	<b>ROOMS</b>
+	<div id="rooms"></div>
 </div>
-<div>
-  <div id="conversacion">
-    <input id="data">
-    <input type="button" id="datasend" value="Enviar">
-  </div>
+<div style="float:left;width:300px;height:250px;overflow:scroll-y;padding:10px;">
+	<div id="conversation"></div>
+	<input id="data" style="width:200px;" />
+	<input type="button" id="datasend" value="send" />
 </div>
