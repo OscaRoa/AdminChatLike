@@ -55,7 +55,7 @@ io.sockets.on('connection', function (socket) {
 		socket.emit('updatechat', 'SERVER', 'estás conectado a ' + username);
 		// Notificación de conexión en la sala.
 		socket.broadcast.to(room).emit('updatechat', 'SERVER', username + ' se ha unido.');
-		socket.emit('updaterooms', rooms, username);
+		socket.emit('updaterooms', usernames, username);
 	});
 
 	// Función 'sendchat' que es ejecutada cuando se pide en el lado del cliente.
@@ -72,7 +72,7 @@ io.sockets.on('connection', function (socket) {
 		// Actualización de la sala.
 		socket.room = newroom;
 		socket.broadcast.to(newroom).emit('updatechat', 'SERVER', socket.username+' se ha unido.');
-		socket.emit('updaterooms', rooms, newroom);
+		socket.emit('updaterooms', usernames, newroom);
 	});
 
 
